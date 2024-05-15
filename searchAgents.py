@@ -310,6 +310,7 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
+        visited_corners = state[1]
         return len(visited_corners) == 0
         util.raiseNotDefined()
 

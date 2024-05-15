@@ -83,27 +83,80 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    "*** YOUR CODE HERE ***"
+
+    # define a stack for open list
+    open_stack = util.Stack()
+    # initialize open stack with start position
+    open_stack.push((problem.getStartState(),'origin',0))
+    # define a stack for closed list
+    closed_stack = util.Stack()
+    backtrack_checkpoints = util.Stack()
+    visited_list = []
+
+    while not open_stack.isEmpty():
+
+        X = open_stack.pop()
+        visited_list.append(X[0])
+        if problem.isGoalState(X[0]):
+            closed_stack.push(X)
+            break
+        else:
+            # generate successors of X
+            children_of_X = problem.getSuccessors(X[0])
+            # push X on closed stack
+            closed_stack.push(X)
+            alreadyVisitedChildren = 0
+            for each_child in children_of_X:
+                if (each_child[0] in visited_list):
+                    alreadyVisitedChildren +=1
+                else:
+                    open_stack.push(each_child)
+
+            if (len(children_of_X) - alreadyVisitedChildren) > 1:
+                backtrack_checkpoints.push(X)
+                if len(children_of_X) == 4:
+                    backtrack_checkpoints.push(X)
+
+            if alreadyVisitedChildren == len(children_of_X):
+                return_point = backtrack_checkpoints.pop()
+                temp_point = closed_stack.pop()
+                while return_point[0] != temp_point[0]:
+                    temp_point = closed_stack.pop()
+                closed_stack.push(temp_point)
+    actions = []
+    while not closed_stack.isEmpty():
+        dir = closed_stack.pop()[1]
+        if dir!='origin':
+                actions.append(dir)
+    #util.raiseNotDefined()
+    actions.reverse()
+    return actions
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     # "*** YOUR CODE HERE ***"
     # util.raiseNotDefined()
-    visited = []
-    queue = util.Queue()
-    queue.push((problem.getStartState(), []))
-    
-    while not queue.isEmpty():
-        current, path = queue.pop()
-        if current in visited:
-            continue
-        visited.append(current)
-        if problem.isGoalState(current):
-            return path
-        for nearby in problem.getSuccessors(current):
-            queue.push((nearby[0], path + [nearby[1]]))
+   # define a queue for open list
+    open_queue = util.Queue()
+    # initialize open stack with start position
+    open_queue.push((problem.getStartState(), []))
+    visited_list = []
 
+    while not open_queue.isEmpty():
+        X, actions = open_queue.pop()
+        if X not in visited_list:
+            visited_list.append(X)
+            if problem.isGoalState(X):
+                return actions
+            else:
+                # generate successors of X
+                    children_of_X = problem.getSuccessors(X)
+
+                    for each_child in children_of_X:
+                            open_queue.push((each_child[0], actions + [each_child[1]]))
     return []
+
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
